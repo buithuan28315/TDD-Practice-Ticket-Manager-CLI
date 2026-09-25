@@ -39,3 +39,17 @@ Priority:    ${ticket.priority}
 Tags:        ${ticket.tags.join(', ')}
 `);
 }
+
+if (args[0] === 'tickets' && args[1] === 'list') {
+    const tickets = listTicketsCommand();
+
+    console.log('\nTickets:\n');
+
+    tickets.forEach(ticket => {
+        console.log(
+            `${ticket.id} | ${ticket.title} | ${ticket.status} | ${ticket.priority} | ${ticket.tags.join(', ')}`
+        );
+    });
+
+    console.log('');
+}
