@@ -2,7 +2,8 @@ import { createTicket } from './ticket';
 import {
     saveTicket,
     listTickets,
-    showTicket
+    showTicket, 
+    updateTicket
 } from './storage';
 
 export function createTicketCommand(data: any) {
@@ -43,4 +44,8 @@ export function listTicketsCommand(filters?: any) {
 
 export function showTicketCommand(id: string) {
     return showTicket(id);
+}
+
+export function updateTicketCommand(id: string, changes: any) {
+    return updateTicket(id, changes);
 }

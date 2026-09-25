@@ -1,7 +1,8 @@
 import {
     createTicketCommand,
     listTicketsCommand,
-    showTicketCommand
+    showTicketCommand,
+    updateTicketCommand
 } from '../src/cli';
 
 import { clearTickets } from '../src/storage';
@@ -155,5 +156,24 @@ describe('cli', () => {
         });
 
         expect(result).toEqual([ticket1]);
+    });
+
+    it('should update ticket status', () => {
+        const ticket = {
+            id: 'TKT-011',
+            title: 'Login bug',
+            description: 'Users cannot login',
+            status: 'open',
+            priority: 'high',
+            tags: ['bug'],
+        };
+
+        createTicketCommand(ticket);
+
+        const result = updateTicketCommand('TKT-011', {
+            status: 'close',
+        });
+
+        expect(result.status).toBe('close');
     });
 });
