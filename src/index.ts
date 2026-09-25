@@ -60,7 +60,7 @@ if (args[0] === 'tickets' && args[1] === 'show') {
     if (!ticketId) {
         console.log('Ticket ID is required');
     } else {
-        const ticket = showTicketCommand(ticketId);
+        const ticket = showTicketCommand(ticketId.toUpperCase());
 
         if (!ticket) {
             console.log('Ticket not found');
