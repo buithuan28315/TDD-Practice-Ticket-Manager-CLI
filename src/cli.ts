@@ -1,9 +1,17 @@
 import { createTicket } from './ticket';
+import {
+    saveTicket,
+    listTickets
+} from './storage';
 
 export function createTicketCommand(data: any) {
-    return createTicket(data);
+    const ticket = createTicket(data);
+
+    saveTicket(ticket);
+
+    return ticket;
 }
 
-export function listTicketsCommand(data: any) {
-            
+export function listTicketsCommand() {
+    return listTickets();
 }
