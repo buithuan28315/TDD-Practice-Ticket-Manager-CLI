@@ -15,3 +15,6 @@ export function createTicketCommand(data: any) {
 export function listTicketsCommand() {
     return listTickets();
 }
+
+export function showTicketCommand() {
+}
