@@ -54,7 +54,7 @@ if (args[0] === 'tickets' && args[1] === 'list') {
     console.log('');
 }
 
-if (args[0] === 'tickets' && args[1] === 'shows') {
+if (args[0] === 'tickets' && args[1] === 'show') {
     const ticketId = args[2];
 
     if (!ticketId) {
