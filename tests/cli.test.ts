@@ -98,4 +98,33 @@ describe('cli', () => {
 
         expect(result).toEqual([ticket1]);
     });
+
+    it('should list tickets by priority', () => {
+        const ticket1 = {
+            id: 'TKT-006',
+            title: 'High priority ticket',
+            description: 'This is high priority',
+            status: 'open',
+            priority: 'high',
+            tags: ['bug'],
+        };
+
+        const ticket2 = {
+            id: 'TKT-007',
+            title: 'Low priority ticket',
+            description: 'This is low priority',
+            status: 'open',
+            priority: 'low',
+            tags: ['feature'],
+        };
+
+        createTicketCommand(ticket1);
+        createTicketCommand(ticket2);
+
+        const result = listTicketsCommand({
+            priority: 'high',
+        });
+
+        expect(result).toEqual([ticket1]);
+    });
 });
