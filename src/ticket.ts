@@ -3,5 +3,9 @@ export function createTicket(data: any) {
         throw new Error('Title is required');
     }
 
+    if (!data.description?.trim()) {
+        throw new Error('Description is required');
+    }
+
     return data;
 }
