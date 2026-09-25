@@ -88,7 +88,7 @@ if (args[0] === 'tickets' && args[1] === 'update') {
     } else if (!status) {
         console.log('Status is required');
     } else {
-        const ticket = updateTicketCommand(ticketId, {
+        const ticket = updateTicketCommand(ticketId.toUpperCase(), {
             status: status
         });
 
