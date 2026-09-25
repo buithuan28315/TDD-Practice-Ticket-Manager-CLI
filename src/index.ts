@@ -53,3 +53,28 @@ if (args[0] === 'tickets' && args[1] === 'list') {
 
     console.log('');
 }
+
+if (args[0] === 'tickets' && args[1] === 'shows') {
+    const ticketId = args[2];
+
+    if (!ticketId) {
+        console.log('Ticket ID is required');
+    } else {
+        const ticket = showTicketCommand(ticketId);
+
+        if (!ticket) {
+            console.log('Ticket not found');
+        } else {
+            console.log(`
+Ticket details
+
+ID:          ${ticket.id}
+Title:       ${ticket.title}
+Description: ${ticket.description}
+Status:      ${ticket.status}
+Priority:    ${ticket.priority}
+Tags:        ${ticket.tags.join(', ')}
+`);
+        }
+    }
+}
