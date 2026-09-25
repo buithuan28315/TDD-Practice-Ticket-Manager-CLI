@@ -29,22 +29,20 @@ Chạy toàn bộ test:
 npm test
 ```
 
-Chạy riêng từng nhóm test:
-
 ```bash
-npx jest tests/ticket.test.ts
+npm test -- ticket.test.ts
 ```
 
 ```bash
-npx jest tests/storage.test.ts
+npm test -- storage.test.ts
 ```
 
 ```bash
-npx jest tests/cli.test.ts
+npm test -- cli.test.ts
 ```
 
 ```bash
-npx jest tests/index.test.ts
+npm test -- index.test.ts
 ```
 
 Project sử dụng Jest với `--runInBand` để tránh các test cùng truy cập file JSON đồng thời.
