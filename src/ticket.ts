@@ -7,29 +7,39 @@ function validateRequired(
     }
 }
 
+function validateStatus(status: string) {
+    if (status !== 'open' && status !== 'close') {
+        throw new Error('Status must be open or close');
+    }
+}
+
+function validatePriority(priority: string) {
+    if (
+        priority !== 'low' &&
+        priority !== 'medium' &&
+        priority !== 'high'
+    ) {
+        throw new Error('Priority must be low or medium or high');
+    }
+}
+
+function validateTags(tags: string[]) {
+    if (!Array.isArray(tags)) {
+        throw new Error('Tags must be an array');
+    }
+
+    if (tags.some(tag => !tag?.trim())) {
+        throw new Error('Tags cannot contain empty values');
+    }
+}
+
 export function createTicket(data: any) {
     validateRequired(data.title, 'Title');
     validateRequired(data.description, 'Description');
 
-    if (data.status !== 'open' && data.status !== 'close') {
-        throw new Error('Status must be open or close');
-    }
-
-    if (
-        data.priority !== 'low' &&
-        data.priority !== 'medium' &&
-        data.priority !== 'high'
-    ) {
-        throw new Error('Priority must be low or medium or high');
-    }
-
-    if (!Array.isArray(data.tags)) {
-        throw new Error('Tags must be an array');
-    }
-
-    if (data.tags.some((tag: string) => !tag?.trim())) {
-        throw new Error('Tags cannot contain empty values');
-    }
+    validateStatus(data.status);
+    validatePriority(data.priority);
+    validateTags(data.tags);
 
     return data;
 }
