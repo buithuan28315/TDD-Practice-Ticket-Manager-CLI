@@ -1,4 +1,4 @@
-import { createTicketCommand } from '../src/cli';
+import { createTicketCommand , listTicketsCommand} from '../src/cli';
 
 describe('cli', () => {
 
@@ -22,4 +22,19 @@ describe('cli', () => {
         });
     });
 
+    it('should list tickets', () => {
+        createTicketCommand({
+            id: 'TKT-001',
+            title: 'Fix login bug',
+            description: 'Users cannot login',
+            status: 'open',
+            priority: 'high',
+            tags: ['bug'],
+        });
+
+        const tickets = listTicketsCommand();
+
+        expect(tickets).toHaveLength(1);
+        expect(tickets[0].id).toBe('TKT-001');
+    });
 });
