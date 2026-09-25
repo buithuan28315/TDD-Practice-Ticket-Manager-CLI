@@ -1,7 +1,8 @@
 import { createTicket } from './ticket';
 import {
     saveTicket,
-    listTickets
+    listTickets,
+    showTicket
 } from './storage';
 
 export function createTicketCommand(data: any) {
@@ -16,5 +17,6 @@ export function listTicketsCommand() {
     return listTickets();
 }
 
-export function showTicketCommand() {
+export function showTicketCommand(id: string) {
+    return showTicket(id);
 }
