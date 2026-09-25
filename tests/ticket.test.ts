@@ -18,4 +18,18 @@ describe('createTicket', () => {
     }).toThrow('Title is required');
   });
 
+  it('should reject ticket when description is missing', () => {
+    const fakeTicket = {
+      title: 'Fix login bug',
+      description: '',
+      status: 'open',
+      priority: 'high',
+      tags: ['bug', 'login'],
+    };
+
+    expect(() => {
+      createTicket(fakeTicket);
+    }).toThrow('Description is required');
+  });
+
 });
