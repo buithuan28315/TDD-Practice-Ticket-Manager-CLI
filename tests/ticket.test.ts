@@ -32,4 +32,35 @@ describe('createTicket', () => {
     }).toThrow('Description is required');
   });
 
+  it.each([
+    {
+      status: 'pending',
+      priority: 'high',
+      tags: ['bug'],
+      error: 'Status must be open or close',
+    },
+    {
+      status: 'open',
+      priority: 'urgent',
+      tags: ['bug'],
+      error: 'Priority must be low or medium or high',
+    },
+    {
+      status: 'open',
+      priority: 'high',
+      tags: [''],
+      error: 'Tags cannot contain empty values',
+    },
+  ])('should reject invalid ticket data', ({ status, priority, tags, error }) => {
+    expect(() => {
+      createTicket({
+        title: 'Fix login bug',
+        description: 'Users cannot login',
+        status,
+        priority,
+        tags,
+      });
+    }).toThrow(error);
+  });
+
 });
