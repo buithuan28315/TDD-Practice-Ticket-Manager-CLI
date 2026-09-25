@@ -20,7 +20,7 @@ if (args[0] === 'tickets' && args[1] === 'create') {
             ) + 1;
 
     const ticket = createTicketCommand({
-        id: `TKT-${String(nextNumber + 1).padStart(3, '0')}`,
+        id: `TKT-${String(nextNumber).padStart(3, '0')}`,
         title: args[2],
         description: args[3],
         status: args[4],
