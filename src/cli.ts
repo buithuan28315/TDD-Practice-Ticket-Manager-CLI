@@ -22,6 +22,12 @@ export function listTicketsCommand(filters?: any) {
 
     let result = tickets;
 
+    if (filters.status) {
+        result = result.filter(
+            ticket => ticket.status === filters.status
+        );
+    }
+
     return result;
 }
 
