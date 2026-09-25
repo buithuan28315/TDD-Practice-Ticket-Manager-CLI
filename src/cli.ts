@@ -20,15 +20,19 @@ export function listTicketsCommand(filters?: any) {
         return tickets;
     }
 
-    let result = tickets;
-
     if (filters.status) {
-        result = result.filter(
+        return tickets.filter(
             ticket => ticket.status === filters.status
         );
     }
 
-    return result;
+    if (filters.priority) {
+        return tickets.filter(
+            ticket => ticket.priority === filters.priority
+        );
+    }
+
+    return tickets;
 }
 
 export function showTicketCommand(id: string) {
