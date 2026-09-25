@@ -197,6 +197,7 @@ Sau khi update, có thể sử dụng `show` để kiểm tra:
 ```bash
 npm run cli -- tickets show TKT-001
 ```
+Ticket ID không phân biệt chữ hoa và chữ thường
 
 Hoặc xem toàn bộ danh sách:
 
