@@ -13,8 +13,16 @@ export function createTicketCommand(data: any) {
     return ticket;
 }
 
-export function listTicketsCommand() {
-    return listTickets();
+export function listTicketsCommand(filters?: any) {
+    const tickets = listTickets();
+
+    if (!filters) {
+        return tickets;
+    }
+
+    let result = tickets;
+
+    return result;
 }
 
 export function showTicketCommand(id: string) {

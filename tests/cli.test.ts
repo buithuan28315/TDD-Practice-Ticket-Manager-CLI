@@ -70,4 +70,32 @@ describe('cli', () => {
         });
     });
 
+    it('should list tickets by status', () => {
+        const ticket1 = {
+            id: 'TKT-004',
+            title: 'Open ticket',
+            description: 'This ticket is open',
+            status: 'open',
+            priority: 'high',
+            tags: ['bug'],
+        };
+
+        const ticket2 = {
+            id: 'TKT-005',
+            title: 'Closed ticket',
+            description: 'This ticket is closed',
+            status: 'close',
+            priority: 'medium',
+            tags: ['bug'],
+        };
+
+        createTicketCommand(ticket1);
+        createTicketCommand(ticket2);
+
+        const result = listTicketsCommand({
+            status: 'open',
+        });
+
+        expect(result).toEqual([ticket1]);
+    });
 });
