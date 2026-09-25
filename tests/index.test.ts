@@ -1,7 +1,12 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
+import path from 'path';
 
-const DATA_FILE = 'data/tickets.json';
+const DATA_FILE = path.join(
+    process.cwd(),
+    'data',
+    'tickets.json'
+);
 
 describe('CLI', () => {
     beforeEach(() => {
