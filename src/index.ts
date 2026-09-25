@@ -78,3 +78,33 @@ Tags:        ${ticket.tags.join(', ')}
         }
     }
 }
+
+if (args[0] === 'tickets' && args[1] === 'update') {
+    const ticketId = args[2];
+    const status = args[3];
+
+    if (!ticketId) {
+        console.log('Ticket ID is required');
+    } else if (!status) {
+        console.log('Status is required');
+    } else {
+        const ticket = updateTicketCommand(ticketId, {
+            status: status
+        });
+
+        if (!ticket) {
+            console.log('Ticket not found');
+        } else {
+            console.log(`
+✓ Ticket updated successfully
+
+ID:          ${ticket.id}
+Title:       ${ticket.title}
+Description: ${ticket.description}
+Status:      ${ticket.status}
+Priority:    ${ticket.priority}
+Tags:        ${ticket.tags.join(', ')}
+`);
+        }
+    }
+}
