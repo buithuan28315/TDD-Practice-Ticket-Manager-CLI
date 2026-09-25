@@ -127,4 +127,33 @@ describe('cli', () => {
 
         expect(result).toEqual([ticket1]);
     });
+
+    it('should list tickets by tags', () => {
+        const ticket1 = {
+            id: 'TKT-008',
+            title: 'Login bug',
+            description: 'Login is broken',
+            status: 'open',
+            priority: 'high',
+            tags: ['bug', 'login'],
+        };
+
+        const ticket2 = {
+            id: 'TKT-009',
+            title: 'New feature',
+            description: 'Add new feature',
+            status: 'open',
+            priority: 'low',
+            tags: ['feature'],
+        };
+
+        createTicketCommand(ticket1);
+        createTicketCommand(ticket2);
+
+        const result = listTicketsCommand({
+            tags: 'bug',
+        });
+
+        expect(result).toEqual([ticket1]);
+    });
 });
