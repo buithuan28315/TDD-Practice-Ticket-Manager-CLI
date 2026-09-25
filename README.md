@@ -429,3 +429,30 @@ Mục tiêu chính của project là thực hành:
 * Lưu trữ dữ liệu bằng JSON
 * Kiểm thử các trường hợp lỗi
 * Sử dụng AI có kiểm soát trong quá trình phát triển
+
+## Dự định mở rộng ở Week 3
+
+Ở Week 3, project dự kiến sẽ được mở rộng để tích hợp với Knowledge Base API theo yêu cầu của bài tập.
+
+Sau khi hoàn thành phần CLI và API integration, có thể mở rộng thêm Angular Frontend để xây dựng giao diện quản lý và truy vấn Knowledge Base nếu phạm vi của Week 3 cho phép.
+
+Dự kiến kiến trúc:
+
+```text
+             ┌──────────────────┐
+             │ Angular Frontend │
+             └────────┬─────────┘
+                      │
+                      ▼
+                 ┌─────────┐
+                 │ KB API  │
+                 └────┬────┘
+                      ▲
+                      │ HTTP
+                ┌─────┴──────┐
+                │ HTTPKBClient│
+                └─────┬──────┘
+                      │
+                ┌─────┴─────┐
+                │    CLI    │
+                └───────────┘
