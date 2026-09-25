@@ -32,6 +32,12 @@ export function listTicketsCommand(filters?: any) {
         );
     }
 
+    if (filters.tags) {
+        return tickets.filter(
+            ticket => ticket.tags.includes(filters.tags)
+        );
+    }
+
     return tickets;
 }
 
