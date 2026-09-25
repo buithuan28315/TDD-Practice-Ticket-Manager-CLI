@@ -1,6 +1,15 @@
-import { createTicketCommand , listTicketsCommand} from '../src/cli';
+import {
+    createTicketCommand,
+    listTicketsCommand
+} from '../src/cli';
+
+import { clearTickets } from '../src/storage';
 
 describe('cli', () => {
+
+    beforeEach(() => {
+        clearTickets();
+    });
 
     it('should create a ticket', () => {
         const ticket = createTicketCommand({
@@ -37,4 +46,5 @@ describe('cli', () => {
         expect(tickets).toHaveLength(1);
         expect(tickets[0].id).toBe('TKT-001');
     });
+
 });
