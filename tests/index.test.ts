@@ -17,4 +17,31 @@ describe('CLI', () => {
         expect(output).toContain('TKT-001');
         expect(output).toContain('Fix login bug');
     });
+
+
+    it('should list tickets from CLI', () => {
+        fs.writeFileSync(
+            DATA_FILE,
+            JSON.stringify([
+                {
+                    id: 'TKT-002',
+                    title: 'Fix login bug',
+                    description: 'Users cannot login',
+                    status: 'open',
+                    priority: 'high',
+                    tags: ['bug', 'login'],
+                },
+            ]),
+            'utf-8'
+        );
+
+        const output = execSync(
+            'npx tsx src/index.ts tickets list'
+        ).toString();
+
+        expect(output).toContain('TKT-002');
+        expect(output).toContain('Fix login bug');
+        expect(output).toContain('open');
+        expect(output).toContain('high');
+    });
 });
