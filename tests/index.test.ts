@@ -129,5 +129,35 @@ describe('CLI', () => {
         expect(output).toContain('close');
     });
 
-    
+    it('should filter tickets by status from CLI', () => {
+        fs.writeFileSync(
+            DATA_FILE,
+            JSON.stringify([
+                {
+                    id: 'TKT-020',
+                    title: 'Open ticket',
+                    description: 'This ticket is open',
+                    status: 'open',
+                    priority: 'high',
+                    tags: ['bug'],
+                },
+                {
+                    id: 'TKT-021',
+                    title: 'Closed ticket',
+                    description: 'This ticket is closed',
+                    status: 'close',
+                    priority: 'high',
+                    tags: ['bug'],
+                },
+            ]),
+            'utf-8'
+        );
+
+        const output = execSync(
+            'npm run cli -- tickets list --status open'
+        ).toString();
+
+        expect(output).toContain('TKT-020');
+        expect(output).not.toContain('TKT-021');
+    });
 });
