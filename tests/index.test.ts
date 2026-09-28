@@ -226,4 +226,45 @@ describe('CLI', () => {
         expect(output).toContain('TKT-040');
         expect(output).not.toContain('TKT-041');
     });
+
+    it('should filter tickets by multiple filters from CLI', () => {
+        fs.writeFileSync(
+            DATA_FILE,
+            JSON.stringify([
+                {
+                    id: 'TKT-050',
+                    title: 'Matching ticket',
+                    description: 'Should match all filters',
+                    status: 'open',
+                    priority: 'high',
+                    tags: ['bug', 'login'],
+                },
+                {
+                    id: 'TKT-051',
+                    title: 'Wrong priority',
+                    description: 'Should not match',
+                    status: 'open',
+                    priority: 'low',
+                    tags: ['bug'],
+                },
+                {
+                    id: 'TKT-052',
+                    title: 'Wrong status',
+                    description: 'Should not match',
+                    status: 'close',
+                    priority: 'high',
+                    tags: ['bug'],
+                },
+            ]),
+            'utf-8'
+        );
+
+        const output = execSync(
+            'npm run cli -- tickets list --status open --priority high --tag bug'
+        ).toString();
+
+        expect(output).toContain('TKT-050');
+        expect(output).not.toContain('TKT-051');
+        expect(output).not.toContain('TKT-052');
+    });
 });
