@@ -41,7 +41,13 @@ Tags:        ${ticket.tags.join(', ')}
 }
 
 if (args[0] === 'tickets' && args[1] === 'list') {
-    const tickets = listTicketsCommand();
+    const statusIndex = args.indexOf('--status');
+
+    const filters = statusIndex !== -1
+        ? { status: args[statusIndex + 1] }
+        : undefined;
+
+    const tickets = listTicketsCommand(filters);
 
     console.log('\nTickets:\n');
 
