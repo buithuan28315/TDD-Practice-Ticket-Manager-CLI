@@ -12,22 +12,25 @@ export type TicketList = Ticket[] & {
 
 const DATA_FILE = path.join(__dirname, '../data/tickets.json');
 
-function writeTickets(tickets: Ticket[]): void {
-    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+function writeTickets(
+    tickets: Ticket[],
+    dataFile: string
+): void {
+    fs.mkdirSync(path.dirname(dataFile), { recursive: true });
 
     fs.writeFileSync(
-        DATA_FILE,
+        dataFile,
         JSON.stringify(tickets, null, 2),
         'utf-8'
     );
 }
 
-export function loadTickets(): TicketList {
-    if (!fs.existsSync(DATA_FILE)) {
+export function loadTickets(dataFile = DATA_FILE): TicketList {
+    if (!fs.existsSync(dataFile)) {
         return [] as TicketList;
     }
 
-    const data = fs.readFileSync(DATA_FILE, 'utf-8');
+    const data = fs.readFileSync(dataFile, 'utf-8');
 
     if (!data.trim()) {
         return [] as TicketList;
@@ -36,29 +39,36 @@ export function loadTickets(): TicketList {
     return JSON.parse(data) as TicketList;
 }
 
-export function saveTicket(ticket: Ticket): void {
-    const tickets = loadTickets();
+export function saveTicket(
+    ticket: Ticket,
+    dataFile = DATA_FILE
+): void {
+    const tickets = loadTickets(dataFile);
 
     tickets.push(ticket);
 
-    writeTickets(tickets);
+    writeTickets(tickets, dataFile);
 }
 
-export function listTickets(): TicketList {
-    return loadTickets();
+export function listTickets(dataFile = DATA_FILE): TicketList {
+    return loadTickets(dataFile);
 }
 
-export function showTicket(id: string): Ticket | undefined {
-    const tickets = loadTickets();
+export function showTicket(
+    id: string,
+    dataFile = DATA_FILE
+): Ticket | undefined {
+    const tickets = loadTickets(dataFile);
 
     return tickets.find(ticket => ticket.id === id);
 }
 
 export function updateTicket(
     id: string,
-    changes: TicketChanges
+    changes: TicketChanges,
+    dataFile = DATA_FILE
 ): Ticket | undefined {
-    const tickets = loadTickets();
+    const tickets = loadTickets(dataFile);
 
     const index = tickets.findIndex(ticket => ticket.id === id);
 
@@ -73,11 +83,11 @@ export function updateTicket(
 
     tickets[index] = updatedTicket;
 
-    writeTickets(tickets);
+    writeTickets(tickets, dataFile);
 
     return updatedTicket;
 }
 
-export function clearTickets() {
-    writeTickets([]);
+export function clearTickets(dataFile = DATA_FILE): void {
+    writeTickets([], dataFile);
 }
