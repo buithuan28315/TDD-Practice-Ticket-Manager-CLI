@@ -43,6 +43,7 @@ Tags:        ${ticket.tags.join(', ')}
 if (args[0] === 'tickets' && args[1] === 'list') {
     const statusIndex = args.indexOf('--status');
     const priorityIndex = args.indexOf('--priority');
+    const tagIndex = args.indexOf('--tag');
 
     const filters = {
         ...(statusIndex !== -1
@@ -50,6 +51,9 @@ if (args[0] === 'tickets' && args[1] === 'list') {
             : {}),
         ...(priorityIndex !== -1
             ? { priority: args[priorityIndex + 1] }
+            : {}),
+        ...(tagIndex !== -1
+            ? { tags: args[tagIndex + 1] }
             : {}),
     };
 
