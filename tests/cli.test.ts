@@ -71,6 +71,10 @@ describe('cli', () => {
         });
     });
 
+    it('should return undefined when showing a missing ticket', () => {
+        expect(showTicketCommand('TKT-999')).toBeUndefined();
+    });
+
     it('should list tickets by status', () => {
         const ticket1 = {
             id: 'TKT-004',
@@ -175,5 +179,28 @@ describe('cli', () => {
         });
 
         expect(result!.status).toBe('close');
+    });
+
+    it('should reject an invalid status when updating a ticket', () => {
+        createTicketCommand({
+            id: 'TKT-012',
+            title: 'Login bug',
+            description: 'Users cannot login',
+            status: 'open',
+            priority: 'high',
+            tags: ['bug'],
+        });
+
+        expect(() => {
+            updateTicketCommand('TKT-012', {
+                status: 'invalid',
+            });
+        }).toThrow('Status must be open or close');
+    });
+
+    it('should return undefined when updating a missing ticket', () => {
+        expect(
+            updateTicketCommand('TKT-999', { status: 'close' })
+        ).toBeUndefined();
     });
 });
