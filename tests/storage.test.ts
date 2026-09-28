@@ -1,17 +1,24 @@
 import { clearTickets, loadTickets, saveTicket } from '../src/storage';
 import { Ticket } from '../src/ticket';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
-const DATA_FILE = path.join(
-    process.cwd(),
-    'data',
-    'tickets.json'
+const TEMP_DIRECTORY = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'ticket-manager-')
 );
+const DATA_FILE = path.join(TEMP_DIRECTORY, 'tickets.json');
 
 describe('storage', () => {
     beforeEach(() => {
-        clearTickets();
+        clearTickets(DATA_FILE);
+    });
+
+    afterAll(() => {
+        fs.rmSync(TEMP_DIRECTORY, {
+            recursive: true,
+            force: true,
+        });
     });
 
     it('should save and load tickets', () => {
@@ -24,9 +31,9 @@ describe('storage', () => {
             tags: ['bug'],
         };
 
-        saveTicket(ticket);
+        saveTicket(ticket, DATA_FILE);
 
-        expect(loadTickets()).toEqual([ticket]);
+        expect(loadTickets(DATA_FILE)).toEqual([ticket]);
     });
 
 
@@ -34,13 +41,9 @@ describe('storage', () => {
     it('should throw error when JSON is corrupted', () => {
         fs.writeFileSync(DATA_FILE, 'invalid json', 'utf-8');
 
-        try {
-            expect(() => {
-                loadTickets();
-            }).toThrow();
-        } finally {
-            fs.writeFileSync(DATA_FILE, '[]', 'utf-8');
-        }
+        expect(() => {
+            loadTickets(DATA_FILE);
+        }).toThrow();
     });
 
     it('should return empty array when JSON file does not exist', () => {
@@ -48,10 +51,6 @@ describe('storage', () => {
             fs.unlinkSync(DATA_FILE);
         }
 
-        try {
-            expect(loadTickets()).toEqual([]);
-        } finally {
-            fs.writeFileSync(DATA_FILE, '[]', 'utf-8');
-        }
+        expect(loadTickets(DATA_FILE)).toEqual([]);
     });
 });
