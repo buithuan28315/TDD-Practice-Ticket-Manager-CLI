@@ -193,4 +193,37 @@ describe('CLI', () => {
         expect(output).toContain('TKT-030');
         expect(output).not.toContain('TKT-031');
     });
+
+
+    it('should filter tickets by tag from CLI', () => {
+        fs.writeFileSync(
+            DATA_FILE,
+            JSON.stringify([
+                {
+                    id: 'TKT-040',
+                    title: 'Bug ticket',
+                    description: 'Login bug',
+                    status: 'open',
+                    priority: 'high',
+                    tags: ['bug', 'login'],
+                },
+                {
+                    id: 'TKT-041',
+                    title: 'Feature ticket',
+                    description: 'New feature',
+                    status: 'open',
+                    priority: 'high',
+                    tags: ['feature'],
+                },
+            ]),
+            'utf-8'
+        );
+
+        const output = execSync(
+            'npm run cli -- tickets list --tag bug'
+        ).toString();
+
+        expect(output).toContain('TKT-040');
+        expect(output).not.toContain('TKT-041');
+    });
 });
