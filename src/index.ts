@@ -42,12 +42,20 @@ Tags:        ${ticket.tags.join(', ')}
 
 if (args[0] === 'tickets' && args[1] === 'list') {
     const statusIndex = args.indexOf('--status');
+    const priorityIndex = args.indexOf('--priority');
 
-    const filters = statusIndex !== -1
-        ? { status: args[statusIndex + 1] }
-        : undefined;
+    const filters = {
+        ...(statusIndex !== -1
+            ? { status: args[statusIndex + 1] }
+            : {}),
+        ...(priorityIndex !== -1
+            ? { priority: args[priorityIndex + 1] }
+            : {}),
+    };
 
-    const tickets = listTicketsCommand(filters);
+    const tickets = listTicketsCommand(
+        Object.keys(filters).length > 0 ? filters : undefined
+    );
 
     console.log('\nTickets:\n');
 
