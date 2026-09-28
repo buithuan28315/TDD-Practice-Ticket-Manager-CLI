@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Ticket } from './ticket';
+import { createTicket, Ticket } from './ticket';
 
 export interface TicketChanges {
     status?: string;
@@ -66,14 +66,16 @@ export function updateTicket(
         return undefined;
     }
 
-    tickets[index] = {
+    const updatedTicket = createTicket({
         ...tickets[index],
         ...changes,
-    } as Ticket;
+    });
+
+    tickets[index] = updatedTicket;
 
     writeTickets(tickets);
 
-    return tickets[index];
+    return updatedTicket;
 }
 
 export function clearTickets() {
