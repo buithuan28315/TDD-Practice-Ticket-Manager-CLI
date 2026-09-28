@@ -160,4 +160,37 @@ describe('CLI', () => {
         expect(output).toContain('TKT-020');
         expect(output).not.toContain('TKT-021');
     });
+
+
+    it('should filter tickets by priority from CLI', () => {
+        fs.writeFileSync(
+            DATA_FILE,
+            JSON.stringify([
+                {
+                    id: 'TKT-030',
+                    title: 'High priority ticket',
+                    description: 'High priority',
+                    status: 'open',
+                    priority: 'high',
+                    tags: ['bug'],
+                },
+                {
+                    id: 'TKT-031',
+                    title: 'Low priority ticket',
+                    description: 'Low priority',
+                    status: 'open',
+                    priority: 'low',
+                    tags: ['bug'],
+                },
+            ]),
+            'utf-8'
+        );
+
+        const output = execSync(
+            'npm run cli -- tickets list --priority high'
+        ).toString();
+
+        expect(output).toContain('TKT-030');
+        expect(output).not.toContain('TKT-031');
+    });
 });
