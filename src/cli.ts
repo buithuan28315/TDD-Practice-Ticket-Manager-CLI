@@ -2,7 +2,7 @@ import { createTicket } from './ticket';
 import {
     saveTicket,
     listTickets,
-    showTicket, 
+    showTicket,
     updateTicket
 } from './storage';
 
@@ -36,8 +36,15 @@ export function listTicketsCommand(filters?: any) {
     }
 
     if (filters.tags) {
-        result = result.filter(
-            ticket => ticket.tags.includes(filters.tags)
+        const tags = filters.tags
+            .split(',')
+            .map((tag: string) => tag.trim())
+            .filter((tag: string) => tag);
+
+        result = result.filter(ticket =>
+            tags.some((tag: string) =>
+                ticket.tags.includes(tag)
+            )
         );
     }
 
