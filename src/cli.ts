@@ -21,25 +21,27 @@ export function listTicketsCommand(filters?: any) {
         return tickets;
     }
 
+    let result = tickets;
+
     if (filters.status) {
-        return tickets.filter(
+        result = result.filter(
             ticket => ticket.status === filters.status
         );
     }
 
     if (filters.priority) {
-        return tickets.filter(
+        result = result.filter(
             ticket => ticket.priority === filters.priority
         );
     }
 
     if (filters.tags) {
-        return tickets.filter(
+        result = result.filter(
             ticket => ticket.tags.includes(filters.tags)
         );
     }
 
-    return tickets;
+    return result;
 }
 
 export function showTicketCommand(id: string) {
