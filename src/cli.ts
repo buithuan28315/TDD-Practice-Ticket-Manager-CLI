@@ -1,4 +1,6 @@
 import { createTicket } from './ticket';
+import { Ticket, TicketInput } from './ticket';
+import { TicketChanges, TicketList } from './storage';
 import {
     saveTicket,
     listTickets,
@@ -6,7 +8,13 @@ import {
     updateTicket
 } from './storage';
 
-export function createTicketCommand(data: any) {
+export interface TicketFilters {
+    status?: string;
+    priority?: string;
+    tags?: string;
+}
+
+export function createTicketCommand(data: TicketInput): Ticket {
     const ticket = createTicket(data);
 
     saveTicket(ticket);
@@ -14,7 +22,7 @@ export function createTicketCommand(data: any) {
     return ticket;
 }
 
-export function listTicketsCommand(filters?: any) {
+export function listTicketsCommand(filters?: TicketFilters): TicketList {
     const tickets = listTickets();
 
     if (!filters) {
@@ -48,13 +56,16 @@ export function listTicketsCommand(filters?: any) {
         );
     }
 
-    return result;
+    return result as TicketList;
 }
 
-export function showTicketCommand(id: string) {
+export function showTicketCommand(id: string): Ticket | undefined {
     return showTicket(id);
 }
 
-export function updateTicketCommand(id: string, changes: any) {
+export function updateTicketCommand(
+    id: string,
+    changes: TicketChanges
+): Ticket | undefined {
     return updateTicket(id, changes);
 }

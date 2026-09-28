@@ -1,3 +1,24 @@
+export type TicketStatus = 'open' | 'close';
+export type TicketPriority = 'low' | 'medium' | 'high';
+
+export interface Ticket {
+    id?: string;
+    title: string;
+    description: string;
+    status: TicketStatus;
+    priority: TicketPriority;
+    tags: string[];
+}
+
+export interface TicketInput {
+    id?: string;
+    title?: string | undefined;
+    description?: string | undefined;
+    status?: string | undefined;
+    priority?: string | undefined;
+    tags?: string[] | undefined;
+}
+
 function validateRequired(
     value: string | null | undefined,
     fieldName: string
@@ -23,7 +44,7 @@ function validatePriority(priority: string) {
     }
 }
 
-function validateTags(tags: string[]) {
+function validateTags(tags: string[] | undefined) {
     if (!Array.isArray(tags)) {
         throw new Error('Tags must be an array');
     }
@@ -33,13 +54,20 @@ function validateTags(tags: string[]) {
     }
 }
 
-export function createTicket(data: any) {
+export function createTicket(data: TicketInput): Ticket {
     validateRequired(data.title, 'Title');
     validateRequired(data.description, 'Description');
 
-    validateStatus(data.status);
-    validatePriority(data.priority);
+    validateStatus(data.status ?? '');
+    validatePriority(data.priority ?? '');
     validateTags(data.tags);
 
-    return data;
+    return {
+        ...(data.id === undefined ? {} : { id: data.id }),
+        title: data.title as string,
+        description: data.description as string,
+        status: data.status as TicketStatus,
+        priority: data.priority as TicketPriority,
+        tags: data.tags as string[],
+    };
 }

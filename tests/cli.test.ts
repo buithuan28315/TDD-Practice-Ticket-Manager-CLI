@@ -46,7 +46,7 @@ describe('cli', () => {
         const tickets = listTicketsCommand();
 
         expect(tickets).toHaveLength(1);
-        expect(tickets[0].id).toBe('TKT-001');
+        expect(tickets[0]!.id).toBe('TKT-001');
     });
 
     it('should show a ticket', () => {
@@ -174,6 +174,6 @@ describe('cli', () => {
             status: 'close',
         });
 
-        expect(result.status).toBe('close');
+        expect(result!.status).toBe('close');
     });
 });

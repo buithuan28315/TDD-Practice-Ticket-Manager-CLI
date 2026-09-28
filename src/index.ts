@@ -15,16 +15,16 @@ if (args[0] === 'tickets' && args[1] === 'create') {
             ? 1
             : Math.max(
                 ...tickets.map(ticket =>
-                    Number(ticket.id.replace('TKT-', ''))
+                    Number(ticket.id?.replace('TKT-', '') ?? 0)
                 )
             ) + 1;
 
     const ticket = createTicketCommand({
         id: `TKT-${String(nextNumber).padStart(3, '0')}`,
-        title: args[2],
-        description: args[3],
-        status: args[4],
-        priority: args[5],
+        title: args[2] ?? '',
+        description: args[3] ?? '',
+        status: args[4] ?? '',
+        priority: args[5] ?? '',
         tags: args[6]?.split(',') || [],
     });
 

@@ -1,4 +1,5 @@
 import { clearTickets, loadTickets, saveTicket } from '../src/storage';
+import { Ticket } from '../src/ticket';
 import fs from 'fs';
 import path from 'path';
 
@@ -14,7 +15,7 @@ describe('storage', () => {
     });
 
     it('should save and load tickets', () => {
-        const ticket = {
+        const ticket: Ticket = {
             id: 'TKT-001',
             title: 'Fix login bug',
             description: 'Users cannot login',
