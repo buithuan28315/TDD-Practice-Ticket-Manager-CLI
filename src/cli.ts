@@ -14,6 +14,7 @@ export interface TicketFilters {
     tags?: string;
 }
 
+// Tạo ticket hợp lệ, lưu lại và trả về kết quả.
 export function createTicketCommand(data: TicketInput): Ticket {
     const ticket = createTicket(data);
 
@@ -22,6 +23,7 @@ export function createTicketCommand(data: TicketInput): Ticket {
     return ticket;
 }
 
+// Lấy danh sách ticket và lọc theo trạng thái, ưu tiên hoặc thẻ.
 export function listTicketsCommand(filters?: TicketFilters): TicketList {
     const tickets = listTickets();
 
@@ -59,10 +61,12 @@ export function listTicketsCommand(filters?: TicketFilters): TicketList {
     return result as TicketList;
 }
 
+// Tìm ticket theo mã định danh.
 export function showTicketCommand(id: string): Ticket | undefined {
     return showTicket(id);
 }
 
+// Cập nhật ticket theo mã định danh và các thay đổi được cung cấp.
 export function updateTicketCommand(
     id: string,
     changes: TicketChanges
