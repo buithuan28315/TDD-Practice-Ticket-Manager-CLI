@@ -8,9 +8,11 @@ export interface Document {
 
 export type NewDocument = Omit<Document, 'id'>;
 
+export type DocumentSummary = Pick<Document, 'id' | 'title' | 'nodePath'>;
+
 export interface SearchResult {
-    document: Document;
-    matchType: string;
+    document: DocumentSummary;
+    matchType?: string;
 }
 
 export interface KBQuery {
