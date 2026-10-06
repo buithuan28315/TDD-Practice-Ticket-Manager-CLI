@@ -4,8 +4,18 @@ import {
     showTicketCommand,
     updateTicketCommand
 } from './cli';
+import { MockKBClient } from './mock-kb-client';
+import { runKBCommand } from './kb-cli';
 
 const args = process.argv.slice(2);
+
+if (args[0] === 'kb') {
+    runKBCommand(args.slice(1), new MockKBClient()).catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.error(message);
+        process.exitCode = 1;
+    });
+}
 
 if (args[0] === 'tickets' && args[1] === 'create') {
     const tickets = listTicketsCommand();
