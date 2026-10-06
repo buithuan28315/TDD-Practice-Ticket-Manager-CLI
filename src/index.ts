@@ -4,17 +4,21 @@ import {
     showTicketCommand,
     updateTicketCommand
 } from './cli';
-import { MockKBClient } from './mock-kb-client';
+import { createKBClient } from './kb-client-factory';
 import { runKBCommand } from './kb-cli';
 
 const args = process.argv.slice(2);
 
 if (args[0] === 'kb') {
-    runKBCommand(args.slice(1), new MockKBClient()).catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error(message);
-        process.exitCode = 1;
-    });
+    void (async () => {
+        try {
+            await runKBCommand(args.slice(1), createKBClient());
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            console.error(message);
+            process.exitCode = 1;
+        }
+    })();
 }
 
 if (args[0] === 'tickets' && args[1] === 'create') {
