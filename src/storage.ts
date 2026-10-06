@@ -12,6 +12,7 @@ export type TicketList = Ticket[] & {
 
 const DATA_FILE = path.join(__dirname, '../data/tickets.json');
 
+// Ghi toàn bộ danh sách ticket vào tệp dữ liệu.
 function writeTickets(
     tickets: Ticket[],
     dataFile: string
@@ -25,6 +26,7 @@ function writeTickets(
     );
 }
 
+// Đọc danh sách ticket từ tệp, hoặc trả về danh sách rỗng nếu chưa có dữ liệu.
 export function loadTickets(dataFile = DATA_FILE): TicketList {
     if (!fs.existsSync(dataFile)) {
         return [] as TicketList;
@@ -39,6 +41,7 @@ export function loadTickets(dataFile = DATA_FILE): TicketList {
     return JSON.parse(data) as TicketList;
 }
 
+// Thêm ticket mới vào danh sách và lưu xuống tệp.
 export function saveTicket(
     ticket: Ticket,
     dataFile = DATA_FILE
@@ -50,10 +53,12 @@ export function saveTicket(
     writeTickets(tickets, dataFile);
 }
 
+// Trả về toàn bộ danh sách ticket đã lưu.
 export function listTickets(dataFile = DATA_FILE): TicketList {
     return loadTickets(dataFile);
 }
 
+// Tìm và trả về ticket theo mã định danh.
 export function showTicket(
     id: string,
     dataFile = DATA_FILE
@@ -63,6 +68,7 @@ export function showTicket(
     return tickets.find(ticket => ticket.id === id);
 }
 
+// Cập nhật ticket theo mã và lưu thay đổi xuống tệp.
 export function updateTicket(
     id: string,
     changes: TicketChanges,
@@ -88,6 +94,7 @@ export function updateTicket(
     return updatedTicket;
 }
 
+// Xóa toàn bộ ticket đã lưu.
 export function clearTickets(dataFile = DATA_FILE): void {
     writeTickets([], dataFile);
 }

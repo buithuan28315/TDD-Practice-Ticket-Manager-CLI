@@ -14,6 +14,7 @@ if (args[0] === 'tickets' && args[1] === 'create') {
         tickets.length === 0
             ? 1
             : Math.max(
+                // Chuyển hậu tố mã ticket thành số để tìm mã tiếp theo.
                 ...tickets.map(ticket =>
                     Number(ticket.id?.replace('TKT-', '') ?? 0)
                 )
@@ -63,6 +64,7 @@ if (args[0] === 'tickets' && args[1] === 'list') {
 
     console.log('\nTickets:\n');
 
+    // In thông tin tóm tắt của từng ticket.
     tickets.forEach(ticket => {
         console.log(
             `${ticket.id} | ${ticket.title} | ${ticket.status} | ${ticket.priority} | ${ticket.tags.join(', ')}`

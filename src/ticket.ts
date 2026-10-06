@@ -18,7 +18,7 @@ export interface TicketInput {
     priority?: string | undefined;
     tags?: string[] | undefined;
 }
-
+// Kiểm tra giá trị bắt buộc không rỗng.
 function validateRequired(
     value: string | null | undefined,
     fieldName: string
@@ -28,12 +28,14 @@ function validateRequired(
     }
 }
 
+// Kiểm tra trạng thái có thuộc các giá trị được hỗ trợ.
 function validateStatus(status: string) {
     if (status !== 'open' && status !== 'close') {
         throw new Error('Status must be open or close');
     }
 }
 
+// Kiểm tra mức độ ưu tiên có hợp lệ.
 function validatePriority(priority: string) {
     if (
         priority !== 'low' &&
@@ -44,6 +46,7 @@ function validatePriority(priority: string) {
     }
 }
 
+// Kiểm tra danh sách thẻ hợp lệ và không có phần tử rỗng.
 function validateTags(tags: string[] | undefined) {
     if (!Array.isArray(tags)) {
         throw new Error('Tags must be an array');
@@ -54,6 +57,7 @@ function validateTags(tags: string[] | undefined) {
     }
 }
 
+// Xác thực dữ liệu đầu vào và tạo một ticket.
 export function createTicket(data: TicketInput): Ticket {
     validateRequired(data.title, 'Title');
     validateRequired(data.description, 'Description');
