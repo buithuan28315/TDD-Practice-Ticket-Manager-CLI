@@ -21,7 +21,7 @@ const databaseName = getRequiredEnv('MONGODB_DATABASE');
 const collectionName = getRequiredEnv('MONGODB_COLLECTION');
 
 interface KnowledgeDocument extends Document {
-    _id: string;
+    id: string;
     title: string;
     content: string;
     nodePath: string;
@@ -42,10 +42,25 @@ export async function testMongoDB(): Promise<void> {
             database.collection<KnowledgeDocument>(collectionName);
 
         const document = await collection.findOne({
-            _id: 'KB-001'
+            id: 'KB-001'
         });
 
         console.log('Document:', document);
+    } finally {
+        await client.close();
+    }
+}
+
+export async function listDocuments(): Promise<KnowledgeDocument[]> {
+    try {
+        await client.connect();
+
+        const database = client.db(databaseName);
+
+        const collection =
+            database.collection<KnowledgeDocument>(collectionName);
+
+        return await collection.find({}).toArray();
     } finally {
         await client.close();
     }

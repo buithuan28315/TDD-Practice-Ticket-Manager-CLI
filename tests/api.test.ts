@@ -13,7 +13,7 @@ describe('KB API', () => {
         expect(response.body).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    _id: 'KB-001',
+                    id: 'KB-001',
                     title: 'Login Error'
                 })
             ])

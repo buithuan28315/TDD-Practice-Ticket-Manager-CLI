@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --runInBand",
     "cli": "tsx src/index.ts",
-    "mongo:test": "tsx src/test-mongodb.ts"
+    "mongo:test": "tsx src/test-mongodb.ts",
+    "api": "tsx src/server.ts"
   },
   "keywords": [],
   "author": "",
