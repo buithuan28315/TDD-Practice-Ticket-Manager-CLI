@@ -5,18 +5,25 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --runInBand",
-    "cli": "tsx src/index.ts"
+    "cli": "tsx src/index.ts",
+    "mongo:test": "tsx src/test-mongodb.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.2",
     "jest": "^30.5.2",
     "ts-jest": "^29.4.12",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "mongodb": "^7.7.0"
   }
 }
