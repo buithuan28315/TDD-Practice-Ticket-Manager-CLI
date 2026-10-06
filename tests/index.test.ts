@@ -8,6 +8,17 @@ const DATA_FILE = path.join(
     'tickets.json'
 );
 
+function runCliExpectingFailure(command: string): string {
+    try {
+        execSync(`npm run cli -- ${command}`, { encoding: 'utf-8' });
+    } catch (error) {
+        const failure = error as { stdout?: string; stderr?: string };
+        return `${failure.stdout ?? ''}${failure.stderr ?? ''}`;
+    }
+
+    throw new Error(`Expected CLI command to fail: ${command}`);
+}
+
 describe('CLI', () => {
     beforeEach(() => {
         fs.writeFileSync(DATA_FILE, '[]', 'utf-8');
@@ -307,5 +318,71 @@ describe('CLI', () => {
         expect(output).toContain('TKT-060');
         expect(output).toContain('TKT-061');
         expect(output).not.toContain('TKT-062');
+    });
+
+    it('should search KB documents from CLI', () => {
+        const output = execSync(
+            'npm run cli -- kb search response --top-k 2'
+        ).toString();
+
+        expect(output).toContain('Search results:');
+        expect(output).toContain('KB-003');
+        expect(output).toContain('Customer Response Template');
+        expect(output).toContain('/templates/email');
+    });
+
+    it('should list KB documents with node and limit options from CLI', () => {
+        const output = execSync(
+            'npm run cli -- kb list --node /technical/authentication --limit 1'
+        ).toString();
+
+        expect(output).toContain('KB-001');
+        expect(output).not.toContain('KB-002');
+    });
+
+    it('should retrieve a KB document from CLI', () => {
+        const output = execSync(
+            'npm run cli -- kb retrieve KB-002'
+        ).toString();
+
+        expect(output).toContain('KB-002');
+        expect(output).toContain('Password Reset');
+        expect(output).toContain('quên mật khẩu');
+    });
+
+    it('should add a KB document from a file through CLI', () => {
+        const filePath = path.join(process.cwd(), 'data', 'cli-kb-add-test.md');
+        fs.writeFileSync(filePath, 'Nội dung mẫu SMS.', 'utf-8');
+
+        try {
+            const output = execSync(
+                `npm run cli -- kb add --file "${filePath}" --path /templates/sms --title "SMS Template" --tags sms,template`
+            ).toString();
+
+            expect(output).toContain('Document added successfully');
+            expect(output).toContain('KB-004');
+            expect(output).toContain('SMS Template');
+            expect(output).toContain('Nội dung mẫu SMS.');
+        } finally {
+            fs.rmSync(filePath, { force: true });
+        }
+    });
+
+    it('should report missing KB command input and return a failure status', () => {
+        const output = runCliExpectingFailure('kb retrieve');
+
+        expect(output).toContain('Usage: kb retrieve <doc-id>');
+    });
+
+    it('should reject invalid search limits and unknown KB documents', () => {
+        const invalidLimitOutput = runCliExpectingFailure(
+            'kb search login --top-k many'
+        );
+        const missingDocumentOutput = runCliExpectingFailure(
+            'kb retrieve KB-999'
+        );
+
+        expect(invalidLimitOutput).toContain('--top-k must be a non-negative integer');
+        expect(missingDocumentOutput).toContain('Document not found: KB-999');
     });
 });
