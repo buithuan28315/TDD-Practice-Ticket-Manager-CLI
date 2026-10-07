@@ -1,4 +1,8 @@
-import { formatKBId, getHighestSequentialKBId } from '../src/mongodb';
+import {
+    buildSearchFilter,
+    formatKBId,
+    getHighestSequentialKBId
+} from '../src/mongodb';
 
 describe('MongoDB KB document IDs', () => {
     test('finds the highest numeric ID and ignores non-sequential IDs', () => {
@@ -14,5 +18,37 @@ describe('MongoDB KB document IDs', () => {
         expect(formatKBId(1)).toBe('KB-001');
         expect(formatKBId(14)).toBe('KB-014');
         expect(formatKBId(1000)).toBe('KB-1000');
+    });
+
+    test('builds a MongoDB search filter with text, node, and any requested tag', () => {
+        expect(buildSearchFilter('log.in', {
+            nodePath: '/technical/authentication',
+            tags: ['login', 'authentication']
+        })).toEqual({
+            $and: [
+                {
+                    $or: [
+                        { title: { $regex: 'log\\.in', $options: 'i' } },
+                        { content: { $regex: 'log\\.in', $options: 'i' } },
+                        { tags: { $regex: 'log\\.in', $options: 'i' } }
+                    ]
+                },
+                { nodePath: '/technical/authentication' },
+                { tags: { $in: ['login', 'authentication'] } }
+            ]
+        });
+    });
+
+    test('ignores absent and empty search filters', () => {
+        const textFilter = {
+            $or: [
+                { title: { $regex: 'login', $options: 'i' } },
+                { content: { $regex: 'login', $options: 'i' } },
+                { tags: { $regex: 'login', $options: 'i' } }
+            ]
+        };
+
+        expect(buildSearchFilter('login')).toEqual(textFilter);
+        expect(buildSearchFilter('login', { tags: [] })).toEqual(textFilter);
     });
 });
