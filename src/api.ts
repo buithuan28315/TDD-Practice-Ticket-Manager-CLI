@@ -1,5 +1,5 @@
 import express from 'express';
-import { Document, NewDocument } from './kb';
+import { Document, KBQuery, NewDocument } from './kb';
 import {
     addDocument,
     listDocuments,
@@ -8,7 +8,11 @@ import {
 } from './mongodb';
 
 export interface KBRepository {
-    searchDocuments(query: string, topK?: number): Promise<Document[]>;
+    searchDocuments(
+        query: string,
+        topK?: number,
+        filters?: KBQuery['filters']
+    ): Promise<Document[]>;
     listDocuments(nodePath?: string, limit?: number): Promise<Document[]>;
     retrieveDocument(docId: string): Promise<Document | null>;
     addDocument(document: NewDocument): Promise<Document>;
@@ -29,6 +33,14 @@ function isNonNegativeInteger(value: unknown): value is number {
     return Number.isSafeInteger(value) && (value as number) >= 0;
 }
 
+function isSearchFilters(value: unknown): value is NonNullable<KBQuery['filters']> {
+    return isRecord(value) &&
+        (value.nodePath === undefined || typeof value.nodePath === 'string') &&
+        (value.tags === undefined ||
+            (Array.isArray(value.tags) &&
+                value.tags.every((tag: unknown) => typeof tag === 'string')));
+}
+
 function sendBadRequest(res: express.Response, message: string): void {
     res.status(400).json({ error: message });
 }
@@ -47,11 +59,19 @@ export function createApi(repository: KBRepository = mongoRepository): express.E
             sendBadRequest(res, 'topK must be a non-negative integer');
             return;
         }
+        if (body.filters !== undefined && !isSearchFilters(body.filters)) {
+            sendBadRequest(res, 'filters must contain a string nodePath and string tags');
+            return;
+        }
 
         try {
             const documents = body.topK === 0
                 ? []
-                : await repository.searchDocuments(body.query, body.topK as number | undefined);
+                : await repository.searchDocuments(
+                    body.query,
+                    body.topK as number | undefined,
+                    body.filters as KBQuery['filters']
+                );
             res.status(200).json({
                 results: documents.map(({ id, title, nodePath }) => ({ id, title, nodePath }))
             });

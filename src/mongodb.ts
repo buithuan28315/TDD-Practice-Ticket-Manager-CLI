@@ -1,12 +1,13 @@
 import {
     Collection,
     Db,
+    Filter,
     MongoClient,
     Document as MongoDocument
 } from 'mongodb';
 import dotenv from 'dotenv';
 import dns from 'dns';
-import { Document, NewDocument } from './kb';
+import { Document, KBQuery, NewDocument } from './kb';
 
 let dotenvLoaded = false;
 
@@ -44,6 +45,29 @@ export function formatKBId(sequence: number): string {
     }
 
     return `KB-${String(sequence).padStart(3, '0')}`;
+}
+
+export function buildSearchFilter(
+    query: string,
+    filters?: KBQuery['filters']
+): Filter<KnowledgeDocument> {
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const clauses: Filter<KnowledgeDocument>[] = [{
+        $or: [
+            { title: { $regex: escapedQuery, $options: 'i' } },
+            { content: { $regex: escapedQuery, $options: 'i' } },
+            { tags: { $regex: escapedQuery, $options: 'i' } }
+        ]
+    }];
+
+    if (filters?.nodePath !== undefined) {
+        clauses.push({ nodePath: filters.nodePath });
+    }
+    if (filters?.tags && filters.tags.length > 0) {
+        clauses.push({ tags: { $in: filters.tags } });
+    }
+
+    return clauses.length === 1 ? clauses[0]! : { $and: clauses };
 }
 
 function isDuplicateKeyError(error: unknown): boolean {
@@ -101,21 +125,15 @@ export async function listDocuments(
 
 export async function searchDocuments(
     query: string,
-    topK?: number
+    topK?: number,
+    filters?: KBQuery['filters']
 ): Promise<KnowledgeDocument[]> {
     if (topK === 0) {
         return [];
     }
 
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return withCollection(async (collection) => {
-        const cursor = collection.find({
-            $or: [
-                { title: { $regex: escapedQuery, $options: 'i' } },
-                { content: { $regex: escapedQuery, $options: 'i' } },
-                { tags: { $regex: escapedQuery, $options: 'i' } }
-            ]
-        });
+        const cursor = collection.find(buildSearchFilter(query, filters));
         if (topK !== undefined) {
             cursor.limit(topK);
         }
