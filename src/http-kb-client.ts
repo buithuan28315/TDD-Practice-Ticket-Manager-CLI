@@ -107,16 +107,10 @@ export class HTTPKBClient implements KBClient {
     }
 
     async search(query: KBQuery): Promise<SearchResult[]> {
-        if (
-            query.filters?.nodePath !== undefined ||
-            (query.filters?.tags?.length ?? 0) > 0
-        ) {
-            throw new Error('The KB API search contract does not support node or tag filters');
-        }
-
         const payload = await this.post('search', {
             query: query.query,
-            ...(query.topK !== undefined ? { topK: query.topK } : {})
+            ...(query.topK !== undefined ? { topK: query.topK } : {}),
+            ...(query.filters !== undefined ? { filters: query.filters } : {})
         });
 
         if (!isRecord(payload) || !Array.isArray(payload.results)) {
