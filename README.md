@@ -133,6 +133,33 @@ close
 
 Ticket ID không phân biệt chữ hoa và chữ thường.
 
+## Knowledge Base CLI
+
+Các lệnh KB mặc định dùng mock client trong bộ nhớ:
+
+```powershell
+npm run cli -- kb search response --top-k 3
+npm run cli -- kb list --node /templates/email --limit 10
+npm run cli -- kb retrieve KB-003
+npm run cli -- kb add --file .\new-template.md --path /templates/email --tags template,email
+```
+
+Để ghi tài liệu vào MongoDB, cần có file `.env` ở thư mục gốc với `MONGODB_URI`, `MONGODB_DATABASE` và `MONGODB_COLLECTION`. Không commit file `.env` hoặc credentials lên Git. Mở terminal thứ nhất để chạy API:
+
+```powershell
+npm run api
+```
+
+Trong terminal thứ hai, chọn HTTP client và gọi API. `KB_API_URL` mặc định là `http://localhost:3000`; `--title` là tùy chọn, nếu bỏ qua thì tên file được dùng làm title:
+
+```powershell
+$env:KB_CLIENT = "http"
+$env:KB_API_URL = "http://localhost:3000"
+npm run cli -- kb add --file .\new-template.md --path /templates/email --title "Customer Email Template" --tags template,email
+```
+
+File path được tính từ thư mục hiện tại của terminal. Qua HTTP, search hiện nhận `query` và `topK`; API contract chưa hỗ trợ filter `--node` hoặc `--tags` cho search.
+
 ## Cấu trúc Project
 
 ```text
