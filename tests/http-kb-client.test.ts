@@ -72,7 +72,14 @@ describe('HTTPKBClient', () => {
                 sendJson(response, 404, { error: 'Not found' });
             }
         }, async (client) => ({
-            search: await client.search({ query: 'password', topK: 3 }),
+            search: await client.search({
+                query: 'password',
+                topK: 3,
+                filters: {
+                    nodePath: document.nodePath,
+                    tags: ['password']
+                }
+            }),
             list: await client.list(document.nodePath, 5),
             retrieved: await client.retrieve(document.id),
             added: await client.add({
@@ -92,7 +99,17 @@ describe('HTTPKBClient', () => {
         expect(outputs.retrieved).toEqual(document);
         expect(outputs.added.id).toBe('KB-008');
         expect(requests).toEqual([
-            { path: '/search', body: { query: 'password', topK: 3 } },
+            {
+                path: '/search',
+                body: {
+                    query: 'password',
+                    topK: 3,
+                    filters: {
+                        nodePath: document.nodePath,
+                        tags: ['password']
+                    }
+                }
+            },
             { path: '/list', body: { nodePath: document.nodePath, limit: 5 } },
             { path: '/retrieve', body: { docId: document.id } },
             {
@@ -146,12 +163,4 @@ describe('HTTPKBClient', () => {
         });
     });
 
-    test('rejects search filters not supported by the API contract', async () => {
-        const client = new HTTPKBClient();
-
-        await expect(client.search({
-            query: 'test',
-            filters: { nodePath: '/docs' }
-        })).rejects.toThrow('does not support node or tag filters');
-    });
 });

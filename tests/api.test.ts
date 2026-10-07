@@ -39,7 +39,35 @@ describe('KB API', () => {
                 nodePath: '/technical/authentication'
             }]
         });
-        expect(repository.searchDocuments).toHaveBeenCalledWith('login', 2);
+        expect(repository.searchDocuments).toHaveBeenCalledWith('login', 2, undefined);
+    });
+
+    test('POST /search validates and passes node and tag filters to storage', async () => {
+        repository.searchDocuments.mockResolvedValue([document]);
+
+        const filters = {
+            nodePath: '/technical/authentication',
+            tags: ['login', 'authentication']
+        };
+        const response = await request(app)
+            .post('/search')
+            .send({ query: 'login', filters });
+
+        expect(response.status).toBe(200);
+        expect(repository.searchDocuments).toHaveBeenCalledWith(
+            'login',
+            undefined,
+            filters
+        );
+    });
+
+    test('POST /search rejects malformed filters', async () => {
+        const response = await request(app)
+            .post('/search')
+            .send({ query: 'login', filters: { tags: ['login', 42] } });
+
+        expect(response.status).toBe(400);
+        expect(repository.searchDocuments).not.toHaveBeenCalled();
     });
 
     test('POST /list passes nodePath and limit to storage', async () => {
