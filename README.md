@@ -11,7 +11,9 @@ Project được phát triển theo phương pháp **Test-Driven Development (TD
 - Jest
 - ts-jest
 - tsx
-- JSON để lưu trữ dữ liệu
+- Express để cung cấp Knowledge Base API
+- MongoDB để lưu trữ Knowledge Base
+- JSON để lưu trữ Ticket cục bộ
 
 ## Cài đặt
 
@@ -276,7 +278,13 @@ npm run cli -- kb retrieve KB-003
 npm run cli -- kb add --file .\new-template.md --path /templates/email --tags template,email
 ```
 
-Để ghi tài liệu vào MongoDB, cần có file `.env` ở thư mục gốc với `MONGODB_URI`, `MONGODB_DATABASE` và `MONGODB_COLLECTION`. Không commit file `.env` hoặc credentials lên Git. Mở terminal thứ nhất để chạy API:
+Mock client là mặc định và giữ dữ liệu trong bộ nhớ. Để dùng API với MongoDB, tạo file `.env` từ mẫu rồi cấu hình URI MongoDB:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Chỉnh `MONGODB_URI`, `MONGODB_DATABASE` và `MONGODB_COLLECTION` trong `.env`. File `.env` đã được ignore bởi Git; chỉ commit `.env.example` và không đưa credentials thật vào source hoặc lịch sử Git. Mở terminal thứ nhất để chạy API:
 
 ```powershell
 npm run api
@@ -290,24 +298,39 @@ $env:KB_API_URL = "http://localhost:3000"
 npm run cli -- kb add --file .\new-template.md --path /templates/email --title "Customer Email Template" --tags template,email
 ```
 
-File path được tính từ thư mục hiện tại của terminal. Qua HTTP, search hiện nhận `query` và `topK`; API contract chưa hỗ trợ filter `--node` hoặc `--tags` cho search.
+HTTP client hỗ trợ cùng các filter search `--node` và `--tags` như mock client. API áp dụng node path chính xác và khớp bất kỳ tag nào được yêu cầu. File path của lệnh `kb add` được tính từ thư mục hiện tại của terminal.
 
 ## Cấu trúc Project
 
 ```text
 ticket-manager-cli/
 ├── src/
+│   ├── api.ts
+│   ├── http-kb-client.ts
+│   ├── kb-cli.ts
+│   ├── kb-client-factory.ts
+│   ├── kb.ts
+│   ├── mock-kb-client.ts
+│   ├── mongodb.ts
+│   ├── server.ts
 │   ├── ticket.ts
 │   ├── storage.ts
 │   ├── cli.ts
 │   └── index.ts
 ├── tests/
+│   ├── api.test.ts
+│   ├── http-kb-client.test.ts
+│   ├── kb-e2e.test.ts
+│   ├── kb-client-factory.test.ts
+│   ├── mock-kb-client.test.ts
+│   ├── mongodb.test.ts
 │   ├── ticket.test.ts
 │   ├── storage.test.ts
 │   ├── cli.test.ts
 │   └── index.test.ts
 ├── data/
 │   └── tickets.json
+├── .env.example
 ├── package.json
 ├── jest.config.js
 ├── tsconfig.json
@@ -416,6 +439,26 @@ tests/index.test.ts
 
 Chạy CLI thực tế và kiểm tra output trả về từ command.
 
+### Knowledge Base end-to-end test
+
+File:
+
+```text
+tests/kb-e2e.test.ts
+```
+
+Chạy lệnh CLI qua HTTP client, HTTP server/API và repository trong bộ nhớ. Test dùng cổng localhost ngẫu nhiên và không cần MongoDB đang chạy.
+
+### MongoDB tests
+
+File:
+
+```text
+tests/mongodb.test.ts
+```
+
+Kiểm tra tạo ID tuần tự và bộ lọc truy vấn MongoDB. Để kiểm tra kết nối với MongoDB đã cấu hình, chạy `npm run mongo:test`.
+
 ## Lưu trữ dữ liệu
 
 Dữ liệu Ticket được lưu trữ cục bộ tại:
@@ -425,6 +468,8 @@ data/tickets.json
 ```
 
 Không cần database bên ngoài.
+
+Knowledge Base dùng mock client trong bộ nhớ khi chạy CLI mặc định. Khi chọn HTTP client, API lưu Knowledge Base trong MongoDB.
 
 File JSON có dạng:
 
@@ -444,42 +489,18 @@ File JSON có dạng:
 ]
 ```
 
-## Mục tiêu Week 2
+## Week 3: Knowledge Base API đã hoàn thành
 
-Mục tiêu chính của project là thực hành:
+Project hiện bao gồm:
 
-* Test-Driven Development (TDD)
-* Quy trình Red - Green - Refactor
-* Unit Test
-* Integration Test
-* Phát triển CLI
-* Lưu trữ dữ liệu bằng JSON
-* Kiểm thử các trường hợp lỗi
-* Sử dụng AI có kiểm soát trong quá trình phát triển
+* CLI Knowledge Base cho search, list, retrieve và add.
+* `MockKBClient` cho phát triển và kiểm thử không cần dịch vụ ngoài.
+* `HTTPKBClient` kết nối với Express API; search filter được hỗ trợ nhất quán trên cả mock và HTTP.
+* API search/list/retrieve/add dùng repository interface; MongoDB là repository mặc định của API.
+* Kiểm thử unit, API, HTTP client, end-to-end CLI → HTTP client → API → repository và các truy vấn MongoDB.
 
-## Dự định mở rộng ở Week 3
-
-Ở Week 3, project dự kiến sẽ được mở rộng để tích hợp với Knowledge Base API theo yêu cầu của bài tập.
-
-Sau khi hoàn thành phần CLI và API integration, có thể mở rộng thêm Angular Frontend để xây dựng giao diện quản lý và truy vấn Knowledge Base nếu phạm vi của Week 3 cho phép.
-
-Dự kiến kiến trúc:
+Kiến trúc hiện tại:
 
 ```text
-             ┌──────────────────┐
-             │ Angular Frontend │
-             └────────┬─────────┘
-                      │
-                      ▼
-                 ┌─────────┐
-                 │ KB API  │
-                 └────┬────┘
-                      ▲
-                      │ HTTP
-                ┌─────┴──────┐
-                │ HTTPKBClient│
-                └─────┬──────┘
-                      │
-                ┌─────┴─────┐
-                │    CLI    │
-                └───────────┘
+CLI ── KBClient ──┬── MockKBClient (in-memory)
+                  └── HTTPKBClient ── Express API ── KBRepository ── MongoDB
